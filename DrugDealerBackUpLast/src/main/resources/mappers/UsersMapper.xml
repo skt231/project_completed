@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.drug.dao.IUsersDao">
+<insert id="insert">
+insert into users values(#{id},#{pw},#{name},#{email},#{address},#{phone},1,default)
+</insert>
+<insert id="insertAuthority">
+insert into authorities values(#{id}, 'member')
+</insert>
+<select id="selectAll" resultType="UsersDto">
+select users.*,authorities.authority from users,authorities where users.id=authorities.id
+</select>
+<select id="select_authorities" resultType="AuthoritiesDto">
+select * from authorities
+</select>
+<select id="selectId" resultType="UsersDto">
+select * from users where id=#{id}
+</select>
+<select id="select_au" resultType="AuthoritiesDto">
+select * from authorities where id=#{id}
+</select>
+<update id="update">
+update users set pw=#{pw},email=#{email},address=#{address},phone=#{phone} where id=#{id}
+</update>
+<update id="update_tier">
+update authorities set authority=#{authority}  where id=#{id}
+</update>
+<delete id="delete">
+delete users where id=#{id}
+</delete>
+<delete id = "delete_au">
+delete authorities where id=#{id}
+</delete>
+</mapper>

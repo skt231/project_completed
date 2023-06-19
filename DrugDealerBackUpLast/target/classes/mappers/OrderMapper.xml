@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.drug.dao.IOrderDao">
+<insert id = "insert">
+insert into order_detail values(ORDER_DETAIL_SEQ.nextval,#{pn},#{quantity},#{price},'x',#{inventory},#{id},sysdate,'x')
+</insert>
+<select id="selectAll" resultType="OrderDto">
+select * from order_detail
+</select>
+<select id="select_pay" resultType="OrderDto">
+select * from order_detail where id=#{id} and pay='o'
+</select>
+<select id="selectId" resultType="OrderDto">
+select * from order_detail where id=#{id} and pay='x'
+</select>
+<select id="select" resultType="OrderDto">
+select * from order_detail where id=#{id}
+</select>
+<select id="selectOne" resultType="OrderDto">
+select * from order_detail where pn=#{pn}
+</select>
+<select id="select_dt" resultType="OrderDto">
+select * from order_detail where odnum=#{odnum}
+</select>
+<delete id="delete">
+delete order_detail where odnum=#{odnum}
+</delete>
+<update id="update">
+update order_detail set dt=#{dt} where odnum=#{odnum}
+</update>
+<update id="update_pay">
+update order_detail set pay='o' where odnum=#{odnum}
+</update>
+</mapper>

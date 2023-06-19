@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.drug.dao.QnaDao">
+
+	<insert id="create">
+		insert into qna_board
+		values (bno_qna.nextval,#{title},#{content},#{writer},sysdate,0,0,0)
+	</insert>
+
+	<select id="read" resultType="com.drug.dto.QnaDto">
+		select * from qna_board where BNO=#{bno} and INDENT=#{indent} and
+		DEPTHNO=#{depthno}
+	</select>
+	
+	<select id="select_bno" resultType="com.drug.dto.QnaDto">
+		select * from qna_board where bno=#{bno}
+	</select>	
+
+
+	<update id="update">
+		update qna_board set title=#{title},content=#{content}
+		where bno=#{bno}
+	</update>
+
+	<delete id="delete">
+		delete from qna_board where bno=#{bno}
+	</delete>
+
+	<sql id='search'>
+		<if test="searchType!=null">
+			<if test="searchType == '00000'.toString()"> and (title like '%'||#{keyword}||'%' OR content like
+				'%'||${keyword}||'%' OR writer like '%'||#{keyword}||'%')</if>
+			<if test="searchType == 't'.toString()"> and title like '%'|| #{keyword}||'%' </if>
+			<if test="searchType == 'c'.toString()"> and content like '%'|| #{keyword}||'%' </if>
+			<if test="searchType == 'w'.toString()"> and writer like '%'|| #{keyword}||'%' </if>
+			<if test="searchType == 'tc'.toString()"> and ( title like '%'|| #{keyword}||'%' OR content like
+				'%'|| #{keyword}||'%') </if>
+		</if>
+	</sql>	
+	<!-- ![CDATA는 []괄호 안에 있는것은 일반 문자열을 기술한것이다. -->
+	<select id="listSearch" resultType="com.drug.dto.QnaDto">
+<![CDATA[select * from (select rownum rn,a.* from (select qna_board.* from qna_board where 1=1  ]]>
+		<!-- include 는 refid 옆에 입력한 search를 찾아간다 위에 sql id='search'로 찾아간다. -->
+		<include refid="search" />
+ <![CDATA[   order by bno desc, depthno, regdate) a where rownum<=#{page} * #{perPageNum}) b where rn>(#{page} -1) * #{perPageNum}]]>
+	</select>
+
+ <!-- 	<select id="listSearch" resultType="com.human.dto.BoardDTO"> 
+		<![CDATA[select 
+			bno, title, content, writer, viewcnt, regdate from (select /*+INDEX_DESC(qna_board,pk_board)*/ 
+			rownum rn,bno,title,content,writer,viewcnt,regdate from qna_board where 1=1 
+		]]> <include refid="search"/> 
+		<![CDATA[ and rownum <= #{page} * #{perPageNum} 
+			and bno > 0 ) where rn > (#{page} -1) * #{perPageNum}]]> 
+	</select> -->
+
+	<!-- 모돈 데이터를 count하고 있다. -->
+	<select id="listSearchCount" resultType="int">
+<![CDATA[ select count(bno) from qna_board where 1=1 ]]>
+		<!-- <include refid="search"/> -->
+<![CDATA[ and bno > 0 ]]>
+	</select>
+
+
+	<update id="viewCount">
+		update qna_board set viewcnt=viewcnt+1
+		where bno=#{bno}
+	</update>
+	
+ 	<update id="reply_update">	
+		UPDATE qna_board SET depthno = depthno + 1
+		WHERE bno = #{bno } AND depthno > #{depthno }
+	</update>
+	
+	<insert id="reply_insert">
+			INSERT INTO qna_board VALUES 
+			(#{bno }, #{title }, #{content }, #{writer },sysdate, 0,#{indent } + 1, #{depthno } + 1)
+	</insert>
+	 
+
+
+</mapper>
+
+
+
+
+
+
+
+
+
+

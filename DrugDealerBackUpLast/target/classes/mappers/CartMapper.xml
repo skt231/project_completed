@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.drug.dao.ICartDao">
+<!-- 장바구니 추가 -->
+<insert id="insert">
+insert into cart values(cart_seq.NEXTVAL,#{id},#{pn},#{quantity},default,default,#{name},#{price},#{inventory})
+</insert>
+<!-- 장바구니 상품 개별 삭제 -->
+<delete id="delete">
+delete from cart where cn=#{cn}
+</delete>
+<!-- 장바구니 전체 삭제 -->
+<delete id="deleteAll">
+delete from cart where id=#{id}
+</delete>
+<!-- 장바구니 수량 수정 -->
+<update id="update">
+update cart set quantity=quantity+#{quantity} where pn=#{pn}
+</update>
+<!-- 장바구니 목록 확인 -->
+<select id="selectId" resultType="com.drug.dto.CartDto">
+select * from cart where id=#{id}
+</select>
+<!-- 장바구니 전체 확인 / 관리자용 -->
+<select id="selectAll" resultType="com.drug.dto.CartDto">
+select * from cart order by cn
+</select>
+<!-- 장바구니 담긴 수량 확인 -->
+<select id="checkCart" resultType="com.drug.dto.CartDto">
+select * from cart where pn=#{pn} and id=#{id}
+</select>
+</mapper>
