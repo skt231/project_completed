@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.booking.dao.BoardDao">
+
+	<!-- 게시글 생성 -->
+	<insert id="insertBoard">
+		INSERT INTO board (bulletin,user_id, title, content,
+		username,depthno,indent)
+		VALUES (#{bulletin},#{user_id}, #{title}, #{content},
+		#{username},0,0)
+	</insert>
+
+	<!-- 게시글 아이디로 조회 -->
+	<select id="getBoardById" resultType="com.booking.dto.BoardDto">
+		SELECT * FROM board WHERE
+		board_id = #{board_id}and INDENT=#{indent} and
+		DEPTHNO=#{depthno}
+	</select>
+
+	<!-- 모든 게시글 조회 -->
+	<select id="getAllBoards" resultType="com.booking.dto.BoardDto">
+		<![CDATA[select * from board where board_id>0 order by board_id desc]]>
+	</select>
+
+	<!-- 게시글 수정 -->
+	<update id="updateBoard">
+		UPDATE board SET title = #{title}, content =
+		#{content}, update_date = SYSDATE WHERE
+		board_id= #{board_id}
+	</update>
+
+	<!-- 게시글 삭제 -->
+	<delete id="deleteBoard">
+		DELETE FROM board WHERE
+		board_id = #{board_id}
+	</delete>
+
+	<sql id='search'>
+		<if test="searchType!=null">
+			<if test="searchType == '00000'.toString()"> and (title like '%'||#{keyword}||'%' OR content like
+				'%'||${keyword}||'%' OR username like '%'||#{keyword}||'%')</if>
+			<if test="searchType == 't'.toString()"> and title like '%'|| #{keyword}||'%' </if>
+			<if test="searchType == 'c'.toString()"> and content like '%'|| #{keyword}||'%' </if>
+			<if test="searchType == 'w'.toString()"> and username like '%'|| #{keyword}||'%' </if>
+			<if test="searchType == 'tc'.toString()"> and ( title like '%'|| #{keyword}||'%' OR content like
+				'%'|| #{keyword}||'%') </if>
+		</if>
+	</sql>
+	<select id="listSearch" resultType="com.booking.dto.BoardDto">
+    <![CDATA[
+         select * from (select rownum rn,a.* from (select Board.* from Board where 1=1  
+]]>
+		<!-- include 는 refid 옆에 입력한 search를 찾아간다 위에 sql id='search'로 찾아간다. -->
+		<include refid="search" />
+             <![CDATA[order by depthno, indent asc,update_date desc) a where rownum<=#{page} * #{perPageNum}) b where rn>(#{page} -1) * #{perPageNum}
+    ]]>
+	</select>
+
+
+
+	<select id="listSearchCount" resultType="int">
+<![CDATA[ select count(board_id) from Board where 1=1 ]]>
+<![CDATA[ and board_id > 0 ]]>
+	</select>
+
+
+	<update id="viewCount">
+		update Board set viewcnt=viewcnt+1
+		where
+		board_id=#{board_id}
+	</update>
+	<update id="comment_update">
+		UPDATE Board SET depthno = depthno + 1
+		WHERE board_id
+		=#{board_id} AND depthno >
+		#{depthno}
+	</update>
+
+	<insert id="comment_insert">
+		INSERT INTO Board(bulletin,user_id, title, content, username,
+		viewcnt, depthno,indent)
+		VALUES (#{bulletin},#{user_id}, #{title}, #{content}, #{username},
+		0, #{depthno}, #{indent})
+	</insert>
+	<select id="getBoardBybull"
+		resultType="com.booking.dto.BoardDto">
+		SELECT * FROM board WHERE
+		bulletin = #{bulletin}
+	</select>
+</mapper>

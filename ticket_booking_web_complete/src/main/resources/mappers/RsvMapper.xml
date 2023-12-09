@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.booking.dao.RsvDao">
+	<insert id="RsvInsert">
+		INSERT INTO reservation (userid,re_username,
+		re_selectedSeats,
+		re_totalAmount, re_mt20id, re_showdate, re_location,
+		re_time,
+		re_title)
+		VALUES (#{userid}, #{re_username},#{re_selectedSeats,
+		jdbcType=ARRAY,
+		javaType=java.util.List,
+		typeHandler=com.booking.handler.StringListTypeHandler},#{re_totalAmount},
+		#{re_mt20id},
+		#{re_showdate}, #{re_location}, #{re_time}, #{re_title})
+	</insert>
+	<resultMap id="RsvDto" type="com.booking.dto.RsvDto">
+		<result property="re_username" column="re_username" />
+		<result property="re_totalAmount" column="re_totalAmount" />
+		<result property="re_mt20id" column="re_mt20id" />
+		<result property="re_showdate" column="re_showdate" />
+		<result property="re_location" column="re_location" />
+		<result property="re_time" column="re_time" />
+		<result property="re_title" column="re_title" />
+		<result property="re_selectedSeats" column="re_selectedSeats"
+			javaType="java.util.List"
+			typeHandler="com.booking.handler.StringListTypeHandler" />
+	</resultMap>
+
+	<select id="getRsvId" resultType="com.booking.dto.RsvDto">
+		select
+		userid,
+		re_username,
+		re_totalAmount,
+		re_mt20id,
+		re_showdate,
+		re_location,
+		re_time,
+		re_title,
+		re_selectedSeats
+		from reservation
+		where userid=#{userid}
+	</select>
+
+	<select id="RsvSeats" resultType="String">
+		select re_selectedSeats from
+		reservation where re_mt20id=#{param1} and
+		re_time=#{param2} and
+		re_showdate=#{param3}
+	</select>
+
+	<delete id="deleteRsv">
+		DELETE FROM reservation
+		WHERE userid=#{param1}
+		AND re_selectedSeats = #{param2, jdbcType=ARRAY, javaType=java.util.List, typeHandler=com.booking.handler.StringListTypeHandler}
+		AND re_mt20id=#{param3}
+	</delete>
+
+
+
+</mapper>
