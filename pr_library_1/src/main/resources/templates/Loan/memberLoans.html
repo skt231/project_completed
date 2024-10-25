@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/basic.html}">
+<div layout:fragment="content">
+    <h5>Loan Details</h5>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped">
+            <thead class="thead-dark">
+            <tr>
+                <th scope="col">Loan ID</th>
+                <th scope="col">Book Title</th>
+                <th scope="col">Member Name</th>
+                <th scope="col">Loan Date</th>
+                <th scope="col">Due Date</th>
+                <th scope="col">Status</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="loan : ${loans}">
+                <td th:text="${loan.loanId}"></td>
+                <td th:text="${loan.bookTitle}"></td>
+                <td th:text="${loan.memberName}"></td>
+                <td th:text="${loan.loanDate}"></td>
+                <td th:text="${loan.dueDate}"></td>
+                <td th:text="${loan.status}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <a class="btn btn-primary mt-3" th:href="@{/loan/list}">Back to Loan List</a>
+</div>
+
+<script layout:fragment="script" th:inline="javascript">
+
+</script>
+

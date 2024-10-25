@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <meta name="description" content=""/>
+    <meta name="author" content=""/>
+    <title>list</title>
+    <!-- Favicon-->
+    <link rel="icon" type="image/x-icon" th:href="@{/assets/favicon.ico}"/>
+    <!-- Core theme CSS (includes Bootstrap)-->
+    <link th:href="@{/css/styles.css}" rel="stylesheet"/>
+</head>
+<body>
+<div class="d-flex" id="wrapper">
+    <!-- Sidebar-->
+    <div class="border-end bg-white" id="sidebar-wrapper">
+        <div class="sidebar-heading border-bottom bg-light">library</div>
+        <div class="list-group list-group-flush">
+            <a class="list-group-item list-group-item-action list-group-item-light p-3" href="/member/mypage/info">MyInfo</a>
+            <a class="list-group-item list-group-item-action list-group-item-light p-3" href="/member/mypage/loan">MyLoan</a>
+            <a class="list-group-item list-group-item-action list-group-item-light p-3" href="/book/list">BookList</a>
+            <!-- Management 메뉴를 ADMIN 사용자만 볼 수 있도록 설정 -->
+            <!-- Management 메뉴를 ADMIN 사용자만 볼 수 있도록 설정 -->
+            <th:block th:if="${#authorization.expression('hasRole(''ROLE_ADMIN'')')}">
+                <a class="list-group-item list-group-item-action list-group-item-light p-3" href="#"
+                   data-bs-toggle="collapse" data-bs-target="#managementOptions" aria-expanded="false"
+                   aria-controls="managementOptions">Management</a>
+                <div class="collapse" id="managementOptions">
+                    <div class="list-group">
+                        <a class="list-group-item list-group-item-action" href="/book/register/">Register Book</a>
+                        <a class="list-group-item list-group-item-action" href="/loan/list">LoanHistory</a>
+                    </div>
+                </div>
+            </th:block>
+        </div>
+    </div>
+    <!-- Page content wrapper-->
+    <div id="page-content-wrapper">
+        <!-- Top navigation-->
+        <nav class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+            <div class="container-fluid">
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                        aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ms-auto mt-2 mt-lg-0">
+                        <li class="nav-item active"><a class="nav-link" href="/book/home">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/member/logout">logout</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <!-- Page content-->
+        <div class="container-fluid" layout:fragment="content">
+
+        </div>
+    </div>
+</div>
+<!-- Bootstrap core JS-->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Core theme JS-->
+<script th:src="@{/js/scripts.js}"></script>
+
+<th:block layout:fragment="script">
+
+</th:block>
+
+</body>
+</html>

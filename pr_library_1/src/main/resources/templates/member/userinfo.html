@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/basic.html}">
+<head>
+    <style>
+        .user-info-header {
+            font-weight: bold;
+            color: #007bff;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .table {
+            margin-top: 20px;
+            width: 70%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .table th {
+            width: 30%;
+            background-color: #f8f9fa;
+            text-align: left;
+        }
+        .table td {
+            text-align: left;
+        }
+        .change-password-link {
+            color: #dc3545;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<div layout:fragment="content">
+    <h5>UserINFO</h5>
+
+    <table class="table table-bordered table-hover table-striped">
+        <tbody>
+        <tr>
+            <th scope="row">Username</th>
+            <td th:text="${userDetails.username}"></td>
+        </tr>
+        <tr>
+            <th scope="row">Name</th>
+            <td th:text="${userDetails.name}"></td>
+        </tr>
+        <tr>
+            <th scope="row">Email</th>
+            <td th:text="${userDetails.email}"></td>
+        </tr>
+        <tr>
+            <th scope="row">Phone</th>
+            <td th:text="${userDetails.phone}"></td>
+        </tr>
+        <tr>
+            <th scope="row">Auth</th>
+            <td th:each="authority : ${userDetails.authorities}"
+                th:text="${#strings.replace(authority.authority, 'ROLE_', '')}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<script layout:fragment="script" th:inline="javascript">
+
+</script>
+</html>

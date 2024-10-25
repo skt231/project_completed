@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/basic.html}">
+<div class="wrapper" layout:fragment="content">
+    <div class="container-fluid">
+        <div class="row mt-3">
+            <form action="/book/list" method="get">
+                <div class="col">
+
+                    <input type="hidden" name="size" th:value="${pageRequestDTO.size}">
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <select class="form-select" name="type">
+                                <option value="">---</option>
+                                <option value="t" th:selected="${pageRequestDTO.type =='t'}">title</option>
+                                <option value="a" th:selected="${pageRequestDTO.type =='a'}">Author</option>
+                                <option value="w" th:selected="${pageRequestDTO.type =='w'}">ISBN</option>
+                                <option value="s" th:selected="${pageRequestDTO.type =='s'}">publisher</option>
+                                <option value="ta" th:selected="${pageRequestDTO.type =='ta'}">title/Author</option>
+                            </select>
+                        </div>
+                        <input type="text" class="form-control" name="keyword" th:value="${pageRequestDTO.keyword}">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary searchBtn" type="submit">Search</button>
+                            <button class="btn btn-outline-secondary clearBtn" type="button">Clear</button>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+
+        <div class="row mt-3">
+            <div class="col">
+
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Book List </h5>
+                        <table class="table table-bordered table-hover table-striped">
+                            <thead>
+                            <tr>
+                                <th scope="col">id</th>
+                                <th scope="col">Title</th>
+                                <th scope="col">Author</th>
+                                <th scope="col">Publisher</th>
+                                <th scope="col">ISBN</th>
+                                <th scope="col">Year</th>
+                                <th>Action</th>
+                            </tr>
+                            </thead>
+
+                            <tbody th:with="link = ${pageRequestDTO.getLink()}">
+
+                            <tr th:each="dto:${responseDTO.dtoList}">
+                                <th scope="row">[[${dto.bid}]]</th>
+                                <td>
+                                    <a th:if="${#authorization.expression('hasRole(''ADMIN'')')}"
+                                       th:href="|@{/book/read(bid=${dto.bid})}&${link}|"> [[${dto.btitle}]] </a>
+                                    <span th:if="${!#authorization.expression('hasRole(''ADMIN'')')}">[[${dto.btitle}]]</span>
+                                </td>
+
+                                <td>[[${dto.author}]]</td>
+                                <td>[[${dto.publisher}]]</td>
+                                <td>[[${dto.isbn}]]</td>
+                                <td>[[${#temporals.format(dto.byear, 'yyyy')}]]</td>
+
+                                <td>
+                                    <form th:if="${#authorization.expression('hasRole(''USER'')')}"
+                                          th:action="@{/loan/borrow/{bookId}(bookId=${dto.bid})}" method="post">
+                                        <button type="submit" class="btn btn-primary"
+                                                th:if="${loanStatus == null or loanStatus == T(com.library.pr.domain.LoanStatus).RETURNED}"
+                                                onclick="return confirm('대출하시겠습니까?');">
+                                            대출하기
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+
+
+                            </tbody>
+                        </table>
+
+                        <div class="float-end">
+                            <ul class="pagination flex-wrap">
+
+                                <li class="page-item" th:if="${responseDTO.prev}">
+                                    <a class="page-link"
+                                       th:href="@{'/book/list?page=' + (${responseDTO.start - 1}) + '&size=' + ${pageRequestDTO.size}}">Previous</a>
+                                </li>
+
+                                <th:block th:each="i : ${#numbers.sequence(responseDTO.start, responseDTO.end)}">
+                                    <li th:class="${responseDTO.page == i} ? 'page-item active' : 'page-item'">
+                                        <a class="page-link"
+                                           th:href="@{'/book/list?page=' + ${i} + '&size=' + ${pageRequestDTO.size}}"
+                                           th:text="${i}"></a>
+                                    </li>
+                                </th:block>
+
+                                <li class="page-item" th:if="${responseDTO.next}">
+                                    <a class="page-link"
+                                       th:href="@{'/book/list?page=' + (${responseDTO.end + 1}) + '&size=' + ${pageRequestDTO.size}}">Next</a>
+                                </li>
+                            </ul>
+                        </div>
+
+
+                    </div><!--end card body-->
+                </div><!--end card-->
+            </div><!-- end col-->
+        </div><!-- end row-->
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"></script>
+        <!-- Core theme JS-->
+        <script th:src="@{/js/scripts.js}"></script>
+        <script layout:fragment="script" th:inline="javascript">
+            const errorMessage = /*[[${error}]]*/ '';
+               if (errorMessage) {
+                   alert(errorMessage);
+               }
+        </script>
