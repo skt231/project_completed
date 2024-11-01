@@ -37,11 +37,10 @@ public class LoanController {
     public String listLoans(PageRequestDTO pageRequestDTO, Model model) {
         PageResponseDTO<LoanDTO> responseDTO;
 
-        // 검색 키워드가 있는 경우
+
         if (pageRequestDTO.getKeyword() != null && !pageRequestDTO.getKeyword().isEmpty()) {
             responseDTO = loanService.searchLoans(pageRequestDTO);
         } else {
-            // 기본 리스트 조회
             responseDTO = loanService.list(pageRequestDTO);
         }
 
@@ -83,21 +82,19 @@ public class LoanController {
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/details/{loanId}")
     public String detailsLoan(@PathVariable Long loanId, Model model) {
-        // 서비스에서 해당 LoanId의 상세 정보를 가져옴
         LoanDTO loanDTO = loanService.DetailsLoans(loanId);
 
-        // 모델에 대출 상세 정보를 추가
         model.addAttribute("loan", loanDTO);
 
-        return "loan/details"; // details.html을 반환 (대출 상세 정보를 표시하는 새로운 페이지)
+        return "loan/details";
     }
 //id별 대출
 @PreAuthorize("hasRole('ADMIN')")
 @GetMapping("/member/memberLoans/{memberId}")
 public String memberLoans(@PathVariable Long memberId, Model model) {
-    List<LoanDTO> memberLoans = loanService.getLoansByMember(memberId); // 해당 회원의 대출 목록 조회
+    List<LoanDTO> memberLoans = loanService.getLoansByMember(memberId);
     model.addAttribute("loans", memberLoans);
-    return "loan/memberLoans"; // 새로운 HTML 페이지로 전달
+    return "loan/memberLoans";
 }
 
     // 대출 목록 조회 페이지
@@ -105,9 +102,9 @@ public String memberLoans(@PathVariable Long memberId, Model model) {
     @GetMapping("/myLoans/LoansStatus")
     public String getMyLoans(@AuthenticationPrincipal MemberSecurityDTO memberSecurityDTO, Model model) {
         Long memberId = memberSecurityDTO.getMemberId();
-        List<LoanDTO> memberLoans = loanService.getLoansByMember(memberId); // 해당 회원의 대출 목록 조회
+        List<LoanDTO> memberLoans = loanService.getLoansByMember(memberId);
         model.addAttribute("loans", memberLoans);
-        return "member/LoansStatus"; // 새로운 HTML 페이지로 전달
+        return "member/LoansStatus";
     }
 
     // 대출 반납을 처리하는 메소드
@@ -117,7 +114,6 @@ public String memberLoans(@PathVariable Long memberId, Model model) {
         log.info("Returning loan with ID: " + loanId);
         Long memberId = memberSecurityDTO.getMemberId();
         try {
-            // LoanService에서 반납 처리를 수행
             loanService.returnLoan(loanId);
             redirectAttributes.addFlashAttribute("result", "success");
             log.info("Loan returned successfully");
@@ -126,7 +122,6 @@ public String memberLoans(@PathVariable Long memberId, Model model) {
             log.info("Failed to return the loan.");
         }
 
-        // 반납 후 해당 사용자의 대출 목록 페이지로 리다이렉트
         return "redirect:/loan/myLoans/LoansStatus";
     }
 
@@ -134,21 +129,20 @@ public String memberLoans(@PathVariable Long memberId, Model model) {
     @PreAuthorize("isAuthenticated()")
     @PostMapping("/borrow/{bookId}")
     public String borrowBook(@PathVariable Long bookId, @AuthenticationPrincipal MemberSecurityDTO memberSecurityDTO, RedirectAttributes redirectAttributes) {
-        Long memberId = memberSecurityDTO.getMemberId();  // 로그인된 회원의 ID 가져오기
+        Long memberId = memberSecurityDTO.getMemberId();
         try {
-            // 현재 회원의 대출 중인 책 개수 가져오기
+            // 현재 회원의 대출 중인 책 개수
             int borrowedCount = loanService.countBorrowedLoansByMember(memberId);
             if (borrowedCount >= 3) {
                 redirectAttributes.addFlashAttribute("error", "대출 가능한 권수를 초과하였습니다. (최대 3권)");
                 return "redirect:/book/list";
             }
-            // 대출 서비스 호출하여 Loan 테이블에 저장
             loanService.borrowLoan(bookId, memberId);
             redirectAttributes.addFlashAttribute("result", "success");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("error", "대출에 실패했습니다.");
         }
 
-        return "redirect:/book/list";  // 책 목록 페이지로 리다이렉트
+        return "redirect:/book/list";
     }
 }

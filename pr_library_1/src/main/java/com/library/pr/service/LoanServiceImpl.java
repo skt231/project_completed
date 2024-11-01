@@ -36,8 +36,8 @@ public class LoanServiceImpl implements LoanService {
 
     private final ModelMapper modelMapper;
     private final LoanRepository loanRepository;
-    private final BookRepository bookRepository;  // Book 레포지토리 추가
-    private final MemberRepository memberRepository;  // Member 레포지토리 추가
+    private final BookRepository bookRepository;
+    private final MemberRepository memberRepository;
 
     @Override
     public Long register(LoanDTO loanDTO) {
@@ -47,10 +47,9 @@ public class LoanServiceImpl implements LoanService {
         Member member = memberRepository.findById(loanDTO.getMember_id())
                 .orElseThrow(() -> new IllegalArgumentException("Invalid member ID: " + loanDTO.getMember_id()));
 
-        // Loan 엔티티로 변환
         Loan loan = Loan.builder()
-                .book(book)  // Book 설정
-                .member(member)  // Member 설정
+                .book(book)
+                .member(member)
                 .status(loanDTO.getStatus())
                 .build();
 
@@ -105,7 +104,6 @@ public class LoanServiceImpl implements LoanService {
         // 총 데이터 개수 구함
         int total = (int) resultPage.getTotalElements();
 
-        // PageResponseDTO 반환
         return PageResponseDTO.<LoanDTO>withAll()
                 .pageRequestDTO(pageRequestDTO)
                 .dtoList(loanDTOList)
@@ -116,7 +114,6 @@ public class LoanServiceImpl implements LoanService {
     public LoanDTO DetailsLoans(Long loanId) {
         Map<String, Object> result = loanRepository.findLoanDetails(loanId);
 
-        // Null 체크를 통해 안전하게 데이터 변환
         BigDecimal loanIdValue = (BigDecimal) result.get("loan_id");
         BigDecimal bookIdValue = (BigDecimal) result.get("book_id");
         BigDecimal memberIdValue = (BigDecimal) result.get("member_id");
@@ -169,8 +166,8 @@ public class LoanServiceImpl implements LoanService {
             LocalDate dueDate = result.get("due_date") != null ? LocalDate.parse((String) result.get("due_date")) : null;
 
             // LoanStatus 값이 제대로 설정되는지 확인합니다
-            String statusValue = (String) result.get("status");  // DB에서 가져온 상태 값
-            LoanStatus status = LoanStatus.valueOf(statusValue);  // String을 LoanStatus로 변환
+            String statusValue = (String) result.get("status");
+            LoanStatus status = LoanStatus.valueOf(statusValue);
 
             return LoanDTO.builder()
                     .loanId(loanIdValue != null ? loanIdValue.longValue() : null)
@@ -183,7 +180,7 @@ public class LoanServiceImpl implements LoanService {
                     .memberName(memberName)
                     .loanDate(loanDate)
                     .dueDate(dueDate)
-                    .status(status)  // 기본 상태 지정
+                    .status(status)
                     .build();
         }).collect(Collectors.toList());
     }
@@ -210,8 +207,8 @@ public class LoanServiceImpl implements LoanService {
             LocalDate dueDate = result.get("due_date") != null ? LocalDate.parse((String) result.get("due_date")) : null;
 
             // LoanStatus 값이 제대로 설정되는지 확인합니다
-            String statusValue = (String) result.get("status");  // DB에서 가져온 상태 값
-            LoanStatus status = LoanStatus.valueOf(statusValue);  // String을 LoanStatus로 변환
+            String statusValue = (String) result.get("status");
+            LoanStatus status = LoanStatus.valueOf(statusValue);
 
             return LoanDTO.builder()
                     .loanId(loanIdValue != null ? loanIdValue.longValue() : null)
@@ -224,7 +221,7 @@ public class LoanServiceImpl implements LoanService {
                     .memberName(memberName)
                     .loanDate(loanDate)
                     .dueDate(dueDate)
-                    .status(status)  // 기본 상태 지정
+                    .status(status)
                     .build();
         }).collect(Collectors.toList());
 
@@ -240,10 +237,8 @@ public class LoanServiceImpl implements LoanService {
     @Override
     public void borrowLoan(Long bookId, Long memberId) {
 
-        // 대출할 책 정보를 가져옴
         Book book = bookRepository.findById(bookId).orElseThrow(() -> new IllegalArgumentException("Invalid book ID"));
 
-        // 대출할 회원 정보를 가져옴
         Member member = memberRepository.findById(memberId).orElseThrow(() -> new IllegalArgumentException("Invalid member ID"));
 
         // Loan 엔티티 생성 및 정보 설정
@@ -257,22 +252,6 @@ public class LoanServiceImpl implements LoanService {
         loanRepository.save(loan);
     }
 
-//    @Override
-//    public LoanStatus getLoanStatusByBookId(Long bookId) {
-//        Optional<Loan> loanOptional = loanRepository.findTopByBookBidOrderByLoanDateDesc(bookId);
-//        return loanOptional.map(Loan::getStatus).orElse(null);
-//    }
-//    @Override
-//public LoanStatus getLoanStatusByBookId(Long bookId) {
-//    List<Loan> loans = loanRepository.findByBook_BidOrderByLoanDateDesc(bookId);
-//        if (loans.isEmpty()) {
-//            return null;
-//        }
-//        Loan latestLoan = loans.get(0);
-//        LoanStatus status = latestLoan.getStatus();
-//        log.info("Book ID: {}, Loan Status: {}", bookId, status);
-//    return latestLoan.getStatus();
-//}
     @Override
     public int countBorrowedLoansByMember(Long memberId) {
         return loanRepository.countByMemberIdAndStatus(memberId, LoanStatus.BORROWED);
@@ -283,23 +262,13 @@ public class LoanServiceImpl implements LoanService {
         Loan loan = loanRepository.findById(loanId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid loan ID: " + loanId));
 
-        loan.setReturnDate(LocalDate.now()); // 반납 날짜를 오늘로 설정
-        // Loan의 상태를 RETURNED로 변경
+        loan.setReturnDate(LocalDate.now());
+
         loan.setStatus(LoanStatus.RETURNED);
 
-        // 변경된 상태를 저장
+
         loanRepository.save(loan);
     }
 
 
-
-    @Override
-    public void modify(LoanDTO loanDTO) {
-
-    }
-
-    @Override
-    public void remove(Long loanId) {
-
-    }
 }

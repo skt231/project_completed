@@ -25,8 +25,6 @@ public class SwaggerConfig {
                 .apis(RequestHandlerSelectors.withClassAnnotation(RestController.class))
                 .paths(PathSelectors.any())
                 .build()
-//                .securitySchemes(List.of(apiKey())) //추가된 부분
-//                .securityContexts(List.of(securityContext())) //추가된 부분
                 .apiInfo(apiInfo());
     }
 
@@ -36,17 +34,4 @@ public class SwaggerConfig {
                 .build();
     }
 
-//    private ApiKey apiKey() {
-//        return new ApiKey("Authorization", "Bearer Token", "header");
-//    }
-
-//    private SecurityContext securityContext() {
-//        return SecurityContext.builder().securityReferences(defaultAuth())
-//                .operationSelector(selector -> selector.requestMappingPattern().startsWith("/api/")).build();
-//    }
-
-//    private List<SecurityReference> defaultAuth() {
-//        AuthorizationScope authorizationScope = new AuthorizationScope("global", "global access");
-//        return List.of(new SecurityReference("Authorization", new AuthorizationScope[]{authorizationScope}));
-//    }
 }

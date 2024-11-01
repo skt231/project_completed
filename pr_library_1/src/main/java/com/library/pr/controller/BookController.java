@@ -77,7 +77,7 @@ public class BookController {
 
         BookDTO bookDTO = bookService.readOne(bid);
 
-        log.info("BookDTO from Service: " + bookDTO); // DTO 확인 로그 추가
+        log.info("BookDTO from Service: " + bookDTO);
 
         model.addAttribute("dto", bookDTO);
 
@@ -98,7 +98,7 @@ public class BookController {
             String link = pageRequestDTO.getLink();
 
             redirectAttributes.addFlashAttribute("errors", bindingResult.getAllErrors());
-            redirectAttributes.addFlashAttribute("dto", bookDTO); // bookDTO 추가
+            redirectAttributes.addFlashAttribute("dto", bookDTO);
             redirectAttributes.addAttribute("bid", bookDTO.getBid());
 
             return "redirect:/book/modify?" + link;

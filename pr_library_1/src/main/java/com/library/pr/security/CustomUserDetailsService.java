@@ -37,7 +37,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         }
 
         Member member = result.get();
-        log.info("Roles: " + member.getRoleSet());  // 권한 확인
+        log.info("Roles: " + member.getRoleSet());
         MemberSecurityDTO memberSecurityDTO =
                 new MemberSecurityDTO(
                         member.getId(),

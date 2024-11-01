@@ -9,5 +9,5 @@ public interface MemberService {
 
     void join(MemberJoinDTO memberJoinDTO) throws IdExistException;
 
-    public String getLoggedInUsername();
+     String getLoggedInUsername();
 }

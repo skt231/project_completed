@@ -71,10 +71,10 @@ public class MemberController {
     @GetMapping("/mypage/loan")
     public String memberLoans(@AuthenticationPrincipal MemberSecurityDTO memberSecurityDTO, Model model) {
         Long memberId = memberSecurityDTO.getMemberId();
-        List<LoanDTO> memberLoans = loanService.getLoansByMember(memberId); // 해당 회원의 대출 목록 조회
+        List<LoanDTO> memberLoans = loanService.getLoansByMember(memberId);
         model.addAttribute("loans", memberLoans);
         model.addAttribute("mId",memberId);
-        return "member/LoansStatus"; // 새로운 HTML 페이지로 전달
+        return "member/LoansStatus";
     }
 
     @PreAuthorize("isAuthenticated()")
@@ -90,7 +90,7 @@ public class MemberController {
         if (auth != null) {
             new SecurityContextLogoutHandler().logout(request, response, auth);
         }
-        request.getSession().invalidate(); // 세션 무효화
+        request.getSession().invalidate();
         return "redirect:/login?logout";
     }
 }

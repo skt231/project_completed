@@ -15,7 +15,7 @@ import java.util.Set;
 @Setter
 @ToString
 public class MemberSecurityDTO extends User {
-    private Long memberId; // member_id 추가
+    private Long memberId;
 
     private String username;
 

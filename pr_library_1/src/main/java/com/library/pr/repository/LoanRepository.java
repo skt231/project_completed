@@ -88,11 +88,6 @@ public interface LoanRepository extends JpaRepository<Loan, Long> {
             nativeQuery = true)
     Page<Map<String, Object>> searchLoansByBookTitle(@Param("keyword") String keyword, Pageable pageable);
 
-    // 특정 책에 대한 최신 대출 정보를 가져오기
-//    Optional<Loan> findTopByBookBidOrderByLoanDateDesc(Long bookId);
-
-    List<Loan> findByBook_BidOrderByLoanDateDesc(Long bookId);
-
     @Query("SELECT COUNT(l) FROM Loan l WHERE l.member.id = :memberId AND l.status = :status")
     int countByMemberIdAndStatus(@Param("memberId") Long memberId, @Param("status") LoanStatus status);
 }

@@ -17,15 +17,11 @@ public interface LoanService {
 
     List<LoanDTO> getLoansByMember(Long memberId);
 
-    public PageResponseDTO<LoanDTO> searchLoans(PageRequestDTO pageRequestDTO);
+     PageResponseDTO<LoanDTO> searchLoans(PageRequestDTO pageRequestDTO);
 
     void borrowLoan(Long bookId, Long memberId);
 
     void returnLoan(Long loanId);
-
-    void modify(LoanDTO loanDTO);
-
-    void remove(Long loanId);
 
     int countBorrowedLoansByMember(Long memberId);
 }
